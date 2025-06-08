@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class PaymentsPage extends StatefulWidget {
   final Map<String, dynamic> user;
@@ -55,29 +56,43 @@ class _PaymentsPageState extends State<PaymentsPage> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
     if (error != null) return Center(child: Text(error!));
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(10),
-      itemCount: payments.length,
-      separatorBuilder: (_, __) => const Divider(),
-      itemBuilder: (context, index) {
-        final payment = payments[index];
-        return ListTile(
-          title: Text(
-            payment['DESCRIPTION'],
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(
-            "OR: ${payment['OR_NUMBER']} • Date: ${payment['DATE_PAID']}",
-          ),
-          trailing: Text(
-            "₱${payment['AMOUNT'].toString()}",
-            style: const TextStyle(
-              color: Colors.green,
-              fontWeight: FontWeight.w600,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: payments.map((payment) {
+          return Card(
+            elevation: 0,
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
-          ),
-        );
-      },
+            child: ListTile(
+              title: Text(
+                payment['DESCRIPTION'] ?? '',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('${payment['OR_NUMBER']}'),
+                  Text(
+                    '${DateFormat("MMMM d, y").format(DateTime.parse(payment['DATE_PAID']))}',
+                  ),
+                ],
+              ),
+              trailing: Text(
+                "₱${double.tryParse(payment['AMOUNT'].toString())?.toStringAsFixed(2)}",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF05056A),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 }

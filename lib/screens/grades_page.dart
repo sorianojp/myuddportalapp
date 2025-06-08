@@ -82,7 +82,6 @@ class _GradesPageState extends State<GradesPage> {
                           )?.toStringAsFixed(0) ??
                           '–'
                     : '–';
-                final isNumeric = double.tryParse(gradeValue) != null;
                 return Card(
                   elevation: 0,
                   margin: const EdgeInsets.symmetric(vertical: 6),
@@ -98,8 +97,11 @@ class _GradesPageState extends State<GradesPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('${g['SUB_NAME']}'),
+                        Text(
+                          '${g['ENCODED_BY']}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         Text('${g['GRADE_NAME']}'),
-                        Text('${g['ENCODED_BY']}'),
                       ],
                     ),
                     trailing: Text(

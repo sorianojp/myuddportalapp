@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
           });
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.grade), label: 'Grades'),
+          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Grades'),
           BottomNavigationBarItem(
             icon: Icon(Icons.payments),
             label: 'Payments',
