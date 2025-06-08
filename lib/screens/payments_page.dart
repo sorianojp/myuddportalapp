@@ -52,36 +52,32 @@ class _PaymentsPageState extends State<PaymentsPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading)
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    if (error != null) return Scaffold(body: Center(child: Text(error!)));
+    if (isLoading) return const Center(child: CircularProgressIndicator());
+    if (error != null) return Center(child: Text(error!));
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Payment History')),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(10),
-        itemCount: payments.length,
-        separatorBuilder: (_, __) => const Divider(),
-        itemBuilder: (context, index) {
-          final payment = payments[index];
-          return ListTile(
-            title: Text(
-              payment['DESCRIPTION'],
-              style: const TextStyle(fontWeight: FontWeight.bold),
+    return ListView.separated(
+      padding: const EdgeInsets.all(10),
+      itemCount: payments.length,
+      separatorBuilder: (_, __) => const Divider(),
+      itemBuilder: (context, index) {
+        final payment = payments[index];
+        return ListTile(
+          title: Text(
+            payment['DESCRIPTION'],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            "OR: ${payment['OR_NUMBER']} • Date: ${payment['DATE_PAID']}",
+          ),
+          trailing: Text(
+            "₱${payment['AMOUNT'].toString()}",
+            style: const TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.w600,
             ),
-            subtitle: Text(
-              "OR: ${payment['OR_NUMBER']} • Date: ${payment['DATE_PAID']}",
-            ),
-            trailing: Text(
-              "₱${payment['AMOUNT'].toString()}",
-              style: const TextStyle(
-                color: Colors.green,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

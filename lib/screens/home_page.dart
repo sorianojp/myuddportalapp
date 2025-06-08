@@ -3,7 +3,6 @@ import 'grades_page.dart';
 import 'payments_page.dart';
 import 'login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   final Map<String, dynamic> user;
@@ -33,20 +32,31 @@ class _HomePageState extends State<HomePage> {
     final List<Widget> _pages = [
       GradesPage(user: widget.user),
       PaymentsPage(user: widget.user),
-      Center(
-        child: ElevatedButton.icon(
-          onPressed: _logout,
-          icon: const Icon(Icons.logout),
-          label: const Text('Logout'),
-        ),
-      ),
     ];
 
+    final titles = ['Grades', 'Payments'];
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF05056A),
+        title: Text(
+          titles[_selectedIndex],
+          style: const TextStyle(color: Colors.white), // Title color
+        ),
+        iconTheme: const IconThemeData(color: Colors.white), // Icon color
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _logout,
+            tooltip: 'Logout',
+          ),
+        ],
+      ),
+
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: const Color(0xFF05056A),
         onTap: (int index) {
           setState(() {
             _selectedIndex = index;
@@ -58,7 +68,6 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.payments),
             label: 'Payments',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
         ],
       ),
     );

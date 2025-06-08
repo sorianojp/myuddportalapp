@@ -12,12 +12,15 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _userIdController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
   String? _error;
 
   Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+
     setState(() {
       _isLoading = true;
       _error = null;
@@ -62,33 +65,64 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Student Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _userIdController,
-              decoration: const InputDecoration(labelText: 'USER ID'),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                // Placeholder for logo
+                const FlutterLogo(size: 80),
+                const SizedBox(height: 20),
+                const Text(
+                  'Student Portal Login',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 30),
+                TextFormField(
+                  controller: _userIdController,
+                  decoration: const InputDecoration(
+                    labelText: 'USER ID',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                  validator: (value) =>
+                      value!.isEmpty ? 'Enter your USER ID' : null,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'PASSWORD',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.lock),
+                  ),
+                  validator: (value) =>
+                      value!.isEmpty ? 'Enter your password' : null,
+                ),
+                const SizedBox(height: 25),
+                _isLoading
+                    ? const CircularProgressIndicator()
+                    : SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _login,
+                          child: const Text('Login'),
+                        ),
+                      ),
+                if (_error != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15),
+                    child: Text(
+                      _error!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+              ],
             ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'PASSWORD'),
-            ),
-            const SizedBox(height: 20),
-            if (_isLoading)
-              const CircularProgressIndicator()
-            else
-              ElevatedButton(onPressed: _login, child: const Text('Login')),
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(_error!, style: const TextStyle(color: Colors.red)),
-              ),
-          ],
+          ),
         ),
       ),
     );

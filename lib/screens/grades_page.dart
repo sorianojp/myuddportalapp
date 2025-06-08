@@ -52,36 +52,32 @@ class _GradesPageState extends State<GradesPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading)
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    if (error != null) return Scaffold(body: Center(child: Text(error!)));
+    if (isLoading) return const Center(child: CircularProgressIndicator());
+    if (error != null) return Center(child: Text(error!));
 
-    return Scaffold(
-      appBar: AppBar(title: Text('Grades')),
-      body: ListView(
-        children: groupedGrades.entries.map((entry) {
-          final term = entry.key;
-          final grades = entry.value;
+    return ListView(
+      children: groupedGrades.entries.map((entry) {
+        final term = entry.key;
+        final grades = entry.value;
 
-          return ExpansionTile(
-            title: Text(
-              term,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            children: grades.map<Widget>((g) {
-              return ListTile(
-                title: Text(
-                  '${g['SUB_CODE']} - ${g['SUB_NAME']} (${g['GRADE_NAME']})',
-                ),
-                subtitle: Text(
-                  'Grade: ${g['GRADE']} | Units: ${g['CREDIT_EARNED']} | ${g['REMARK']}',
-                ),
-                trailing: Text(g['ENCODED_BY'] ?? ''),
-              );
-            }).toList(),
-          );
-        }).toList(),
-      ),
+        return ExpansionTile(
+          title: Text(
+            term,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          children: grades.map<Widget>((g) {
+            return ListTile(
+              title: Text(
+                '${g['SUB_CODE']} - ${g['SUB_NAME']} (${g['GRADE_NAME']})',
+              ),
+              subtitle: Text(
+                'Grade: ${g['GRADE']} | Units: ${g['CREDIT_EARNED']} | ${g['REMARK']}',
+              ),
+              trailing: Text(g['ENCODED_BY'] ?? ''),
+            );
+          }).toList(),
+        );
+      }).toList(),
     );
   }
 }
