@@ -72,11 +72,15 @@ class _LoginPageState extends State<LoginPage> {
             key: _formKey,
             child: Column(
               children: [
-                // Placeholder for logo
-                const FlutterLogo(size: 80),
+                Image.network(
+                  'https://udd.edu.ph/images/logo.png',
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.contain,
+                ),
                 const SizedBox(height: 20),
                 const Text(
-                  'Student Portal Login',
+                  'My UdD Student Portal',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),
@@ -108,6 +112,14 @@ class _LoginPageState extends State<LoginPage> {
                     : SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF05056A),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                           onPressed: _login,
                           child: const Text('Login'),
                         ),
