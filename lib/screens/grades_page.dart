@@ -55,29 +55,69 @@ class _GradesPageState extends State<GradesPage> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
     if (error != null) return Center(child: Text(error!));
 
-    return ListView(
-      children: groupedGrades.entries.map((entry) {
-        final term = entry.key;
-        final grades = entry.value;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: groupedGrades.entries.map((entry) {
+          final term = entry.key;
+          final grades = entry.value;
 
-        return ExpansionTile(
-          title: Text(
-            term,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          children: grades.map<Widget>((g) {
-            return ListTile(
-              title: Text(
-                '${g['SUB_CODE']} - ${g['SUB_NAME']} (${g['GRADE_NAME']})',
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                term,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF05056A),
+                ),
               ),
-              subtitle: Text(
-                'Grade: ${g['GRADE']} | Units: ${g['CREDIT_EARNED']} | ${g['REMARK']}',
-              ),
-              trailing: Text(g['ENCODED_BY'] ?? ''),
-            );
-          }).toList(),
-        );
-      }).toList(),
+              const SizedBox(height: 10),
+              ...grades.map((g) {
+                final gradeValue = g['GRADE'] != null
+                    ? double.tryParse(
+                            g['GRADE'].toString(),
+                          )?.toStringAsFixed(0) ??
+                          '–'
+                    : '–';
+                final isNumeric = double.tryParse(gradeValue) != null;
+                return Card(
+                  elevation: 0,
+                  margin: const EdgeInsets.symmetric(vertical: 6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ListTile(
+                    title: Text(
+                      '${g['SUB_CODE']}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${g['SUB_NAME']}'),
+                        Text('${g['GRADE_NAME']}'),
+                        Text('${g['ENCODED_BY']}'),
+                      ],
+                    ),
+                    trailing: Text(
+                      gradeValue,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF05056A),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(height: 20),
+            ],
+          );
+        }).toList(),
+      ),
     );
   }
 }
