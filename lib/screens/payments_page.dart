@@ -27,7 +27,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
     try {
       final response = await http.get(
         Uri.parse(
-          'https://testportal.udd.edu.ph/api/payments?USER_INDEX=${widget.user['USER_INDEX']}',
+          'https://portal.udd.edu.ph/api/payments?USER_INDEX=${widget.user['USER_INDEX']}',
         ),
       );
 
@@ -56,44 +56,48 @@ class _PaymentsPageState extends State<PaymentsPage> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
     if (error != null) return Center(child: Text(error!));
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: payments.map((payment) {
-          return Card(
-            elevation: 0,
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: ListTile(
-              title: Text(
-                payment['DESCRIPTION'] ?? '',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+    return RefreshIndicator(
+      onRefresh: fetchPayments,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: payments.map((payment) {
+            return Card(
+              elevation: 0,
+              margin: const EdgeInsets.symmetric(vertical: 6),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('${payment['OR_NUMBER']}'),
-                  Text(
-                    DateFormat(
-                      "MMMM d, y",
-                    ).format(DateTime.parse(payment['DATE_PAID'])),
+              child: ListTile(
+                title: Text(
+                  payment['DESCRIPTION'] ?? '',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('${payment['OR_NUMBER']}'),
+                    Text(
+                      DateFormat(
+                        "MMMM d, y",
+                      ).format(DateTime.parse(payment['DATE_PAID'])),
+                    ),
+                  ],
+                ),
+                trailing: Text(
+                  "₱${double.tryParse(payment['AMOUNT'].toString())?.toStringAsFixed(2)}",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF05056A),
                   ),
-                ],
-              ),
-              trailing: Text(
-                "₱${double.tryParse(payment['AMOUNT'].toString())?.toStringAsFixed(2)}",
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF05056A),
                 ),
               ),
-            ),
-          );
-        }).toList(),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

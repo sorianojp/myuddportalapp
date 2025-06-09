@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:myuddportal/screens/grades_page.dart';
+import 'package:myuddportal/screens/login_page.dart';
+import 'package:myuddportal/screens/payments_page.dart';
 import 'package:myuddportal/screens/schedule_page.dart';
-import 'grades_page.dart';
-import 'payments_page.dart';
-import 'login_page.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {

@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://testportal.udd.edu.ph/api/login'),
+        Uri.parse('https://portal.udd.edu.ph/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'USER_ID': _userIdController.text.trim(),

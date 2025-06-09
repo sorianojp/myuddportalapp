@@ -26,7 +26,7 @@ class _SchedulePageState extends State<SchedulePage> {
     try {
       final response = await http.get(
         Uri.parse(
-          'https://testportal.udd.edu.ph/api/schedule?USER_INDEX=${widget.user['USER_INDEX']}',
+          'https://portal.udd.edu.ph/api/schedule?USER_INDEX=${widget.user['USER_INDEX']}',
         ),
       );
 
@@ -76,35 +76,39 @@ class _SchedulePageState extends State<SchedulePage> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
     if (error != null) return Center(child: Text(error!));
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: schedule.map((item) {
-          return Card(
-            elevation: 0,
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: ListTile(
-              title: Text(
-                item['SUB_CODE'] ?? '',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+    return RefreshIndicator(
+      onRefresh: fetchSchedule,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: schedule.map((item) {
+            return Card(
+              elevation: 0,
+              margin: const EdgeInsets.symmetric(vertical: 6),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(item['SUB_NAME'] ?? ''),
-                  Text(item['SECTION'] ?? ''),
-                  Text(
-                    '${getWeekDayName(item['WEEK_DAY'].toString())} • ${item['TIME_FROM']} - ${item['TIME_TO']} • ${item['ROOM_NUMBER']}',
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ],
+              child: ListTile(
+                title: Text(
+                  item['SUB_CODE'] ?? '',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item['SUB_NAME'] ?? ''),
+                    Text(item['SECTION'] ?? ''),
+                    Text(
+                      '${getWeekDayName(item['WEEK_DAY'].toString())} • ${item['TIME_FROM']} - ${item['TIME_TO']} • ${item['ROOM_NUMBER']}',
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }).toList(),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

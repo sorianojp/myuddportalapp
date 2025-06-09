@@ -26,7 +26,7 @@ class _GradesPageState extends State<GradesPage> {
     try {
       final response = await http.get(
         Uri.parse(
-          'https://testportal.udd.edu.ph/api/grades?USER_INDEX=${widget.user['USER_INDEX']}',
+          'https://portal.udd.edu.ph/api/grades?USER_INDEX=${widget.user['USER_INDEX']}',
         ),
       );
 
@@ -55,70 +55,74 @@ class _GradesPageState extends State<GradesPage> {
     if (isLoading) return const Center(child: CircularProgressIndicator());
     if (error != null) return Center(child: Text(error!));
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: groupedGrades.entries.map((entry) {
-          final term = entry.key;
-          final grades = entry.value;
+    return RefreshIndicator(
+      onRefresh: fetchGrades,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: groupedGrades.entries.map((entry) {
+            final term = entry.key;
+            final grades = entry.value;
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                term,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF05056A),
-                ),
-              ),
-              const SizedBox(height: 10),
-              ...grades.map((g) {
-                final gradeValue = g['GRADE'] != null
-                    ? double.tryParse(
-                            g['GRADE'].toString(),
-                          )?.toStringAsFixed(0) ??
-                          '–'
-                    : '–';
-                return Card(
-                  elevation: 0,
-                  margin: const EdgeInsets.symmetric(vertical: 6),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  term,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF05056A),
                   ),
-                  child: ListTile(
-                    title: Text(
-                      '${g['SUB_CODE']}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                ...grades.map((g) {
+                  final gradeValue = g['GRADE'] != null
+                      ? double.tryParse(
+                              g['GRADE'].toString(),
+                            )?.toStringAsFixed(0) ??
+                            '–'
+                      : '–';
+                  return Card(
+                    elevation: 0,
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('${g['SUB_NAME']}'),
-                        Text(
-                          '${g['ENCODED_BY']}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                    child: ListTile(
+                      title: Text(
+                        '${g['SUB_CODE']}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${g['SUB_NAME']}'),
+                          Text(
+                            '${g['ENCODED_BY']}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text('${g['GRADE_NAME']}'),
+                        ],
+                      ),
+                      trailing: Text(
+                        gradeValue,
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF05056A),
                         ),
-                        Text('${g['GRADE_NAME']}'),
-                      ],
-                    ),
-                    trailing: Text(
-                      gradeValue,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w900,
-                        color: Color(0xFF05056A),
                       ),
                     ),
-                  ),
-                );
-              }),
-              const SizedBox(height: 20),
-            ],
-          );
-        }).toList(),
+                  );
+                }),
+                const SizedBox(height: 20),
+              ],
+            );
+          }).toList(),
+        ),
       ),
     );
   }
