@@ -107,7 +107,7 @@ class _GradesPageState extends State<GradesPage> {
                     trailing: Text(
                       gradeValue,
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 28,
                         fontWeight: FontWeight.w900,
                         color: Color(0xFF05056A),
                       ),

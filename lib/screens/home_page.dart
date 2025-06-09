@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myuddportal/screens/schedule_page.dart';
 import 'grades_page.dart';
 import 'payments_page.dart';
 import 'login_page.dart';
@@ -29,12 +30,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = [
+    final List<Widget> pages = [
       GradesPage(user: widget.user),
       PaymentsPage(user: widget.user),
+      SchedulePage(user: widget.user),
     ];
 
-    final titles = ['Grades', 'Payments'];
+    final titles = ['Grades', 'Payment History', 'Class Schedule'];
 
     return Scaffold(
       appBar: AppBar(
@@ -53,7 +55,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
 
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xFF05056A),
@@ -67,6 +69,10 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.payments),
             label: 'Payments',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.schedule),
+            label: 'Schedule',
           ),
         ],
       ),

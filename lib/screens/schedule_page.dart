@@ -1,45 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:intl/intl.dart';
 
-class PaymentsPage extends StatefulWidget {
+class SchedulePage extends StatefulWidget {
   final Map<String, dynamic> user;
 
-  const PaymentsPage({super.key, required this.user});
+  const SchedulePage({super.key, required this.user});
 
   @override
-  State<PaymentsPage> createState() => _PaymentsPageState();
+  State<SchedulePage> createState() => _SchedulePageState();
 }
 
-class _PaymentsPageState extends State<PaymentsPage> {
-  List<Map<String, dynamic>> payments = [];
+class _SchedulePageState extends State<SchedulePage> {
+  List<Map<String, dynamic>> schedule = [];
   bool isLoading = true;
   String? error;
 
   @override
   void initState() {
     super.initState();
-    fetchPayments();
+    fetchSchedule();
   }
 
-  Future<void> fetchPayments() async {
+  Future<void> fetchSchedule() async {
     try {
       final response = await http.get(
         Uri.parse(
-          'https://testportal.udd.edu.ph/api/payments?USER_INDEX=${widget.user['USER_INDEX']}',
+          'https://testportal.udd.edu.ph/api/schedule?USER_INDEX=${widget.user['USER_INDEX']}',
         ),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          payments = List<Map<String, dynamic>>.from(data['payments']);
+          schedule = List<Map<String, dynamic>>.from(data['schedule']);
           isLoading = false;
         });
       } else {
         setState(() {
-          error = 'Failed to load payments';
+          error = 'Failed to load schedule';
           isLoading = false;
         });
       }
@@ -51,6 +50,27 @@ class _PaymentsPageState extends State<PaymentsPage> {
     }
   }
 
+  String getWeekDayName(String day) {
+    switch (day) {
+      case '1':
+        return 'Monday';
+      case '2':
+        return 'Tuesday';
+      case '3':
+        return 'Wednesday';
+      case '4':
+        return 'Thursday';
+      case '5':
+        return 'Friday';
+      case '6':
+        return 'Saturday';
+      case '7':
+        return 'Sunday';
+      default:
+        return 'Unknown';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) return const Center(child: CircularProgressIndicator());
@@ -59,8 +79,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: payments.map((payment) {
+        children: schedule.map((item) {
           return Card(
             elevation: 0,
             margin: const EdgeInsets.symmetric(vertical: 6),
@@ -69,27 +88,19 @@ class _PaymentsPageState extends State<PaymentsPage> {
             ),
             child: ListTile(
               title: Text(
-                payment['DESCRIPTION'] ?? '',
+                item['SUB_CODE'] ?? '',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${payment['OR_NUMBER']}'),
+                  Text(item['SUB_NAME'] ?? ''),
+                  Text(item['SECTION'] ?? ''),
                   Text(
-                    DateFormat(
-                      "MMMM d, y",
-                    ).format(DateTime.parse(payment['DATE_PAID'])),
+                    '${getWeekDayName(item['WEEK_DAY'].toString())} • ${item['TIME_FROM']} - ${item['TIME_TO']} • ${item['ROOM_NUMBER']}',
+                    style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ],
-              ),
-              trailing: Text(
-                "₱${double.tryParse(payment['AMOUNT'].toString())?.toStringAsFixed(2)}",
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF05056A),
-                ),
               ),
             ),
           );
